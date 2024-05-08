@@ -7,6 +7,7 @@ import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import HomeScreen from './screens/HomeScreen'; // Assuming HomeScreen is a TypeScript component
 import EmprestimoScreen from './screens/EmprestimoScreen';
 import DevolucaoScreen from './screens/DevolucaoScreen';
+import DetalhesScreen from './screens/DetalhesScreen';
 
 
 const Stack = createStackNavigator();
@@ -20,6 +21,7 @@ const App: React.FC = () => {
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="EmprestimoScreen" component={EmprestimoScreen} />
           <Stack.Screen name="DevolucaoScreen" component={DevolucaoScreen} />
+          <Stack.Screen name="DetalhesScreen" component={DetalhesScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </QueryClientProvider>

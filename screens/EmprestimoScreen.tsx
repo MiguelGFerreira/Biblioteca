@@ -1,120 +1,42 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Livro from '../components/Livro'; // Assuming Livro is a TypeScript component
-import {
-	View,
-	Text,
-	StyleSheet,
-	FlatList,
-	TextInput,
-	TouchableOpacity,
-} from 'react-native';
+import { SafeAreaView, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
+import { getLivros } from '../api/livros';
+import { Book, ScreenName } from '../types';
+import { StackNavigationProp } from '@react-navigation/stack';
 
-interface Book {
-	id: number;
-	titulo: string;
-	autor: string;
-}
+export default function EmprestimoScreen({ navigation }: {navigation: any}) {
 
-export default function EmprestimoScreen() {
-	const [livroSelecionado, setLivroSelecionado] = useState<Book | null>(null);
-	const [matricula, setMatricula] = useState('');
-	const [livros, setLivros] = useState([]);
+	//const navigation = useNavigation<StackNavigationProp<any>>();
 
-	const navigation = useNavigation();
+	const livrosQuery = useQuery({
+		queryKey: ['livros'],
+		queryFn: getLivros,
+	});
 
-	// const getLivros = async (): Promise<Book[]> => {
-	// 	try {
-	// 		const response = await axios.get('http://localhost:3000/express-biblioteca/livros');
-	// 		return response.data;
-	// 	} catch (error) {
-	// 		console.error(error);
-	// 		return [];
-	// 	}
-	// };
-
-	const fetchData = () => {
-		const baseURL = "http://127.0.0.1:3000/express-biblioteca";
-		axios.get(`${baseURL}/livros`).then((response) => console.log(response.data));
-	};
-
-	const getLivros = async () => {
-		const response = await fetch(`http://localhost:3000/express-biblioteca/livros`);
-		const data = await response.json();
-		setLivros(data);
-	}
-
-	// const livrosQuery = useQuery<Book[], Error>({
-	// 	queryKey: ['livros'],
-	// 	queryFn: getLivros,
-	// });
-
-	// const livros = livrosQuery.data || [];
-
-	const handleBookSelection = (book: Book) => {
-		setLivroSelecionado(book);
-	};
-
-	const handleMatriculaChange = (text: string) => {
-		setMatricula(text);
-	};
-
-	const handleBorrowBook = () => {
-		if (!matricula) {
-			alert('Insira sua matrícula para continuar.');
-			return;
-		}
-
-		alert('Livro emprestado com sucesso!');
-		setLivroSelecionado(null);
-		setMatricula('');
-		navigation.goBack();
+	const handleNavigate = (screenName: ScreenName, bookId: number) => {
+		navigation.navigate(screenName.name, {bookId});
 	};
 
 	const renderItem = ({ item }: { item: Book }) => (
-		<TouchableOpacity onPress={() => handleBookSelection(item)}>
-			<Livro title={item.titulo} author={item.autor} isSelected={livroSelecionado === item} />
+		<TouchableOpacity onPress={() => handleNavigate({ name: 'DetalhesScreen' }, item.id)}>
+			<Livro title={item.titulo} author={item.autor} />
 		</TouchableOpacity>
 	);
 
-	useEffect(() => {
-		fetchData();
-	}, []);
-
-	console.log("Livros: " + livros.length);
-
 	return (
-		<View style={styles.container}>
+		<SafeAreaView style={styles.container}>
 			<Text style={styles.title}>Biblioteca</Text>
 
 			<FlatList
-				data={livros}
+				data={livrosQuery.data}
 				renderItem={renderItem}
 				keyExtractor={(item) => item.id.toString()}
 			/>
 
-			{livroSelecionado && (
-				<View style={styles.selectedBookContainer}>
-					<Text style={styles.label}>Selecionado:</Text>
-					<Text style={styles.selectedBookTitle}>{livroSelecionado.titulo}</Text>
-
-					<Text style={styles.label}>Matrícula:</Text>
-					<TextInput
-						keyboardType="numeric"
-						maxLength={6}
-						style={styles.input}
-						value={matricula}
-						onChangeText={handleMatriculaChange}
-					/>
-
-					<TouchableOpacity style={styles.borrowButton} onPress={handleBorrowBook}>
-						<Text style={styles.borrowButtonText}>Emprestar Livro</Text>
-					</TouchableOpacity>
-				</View>
-			)}
-		</View>
+		</SafeAreaView>
 	);
 }
 

@@ -1,21 +1,18 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { SafeAreaView, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-
-interface ScreenName {
-	name: string;
-}
+import { ScreenName } from '../types';
 
 const HomeScreen = () => {
 	const navigation = useNavigation<StackNavigationProp<any>>();
 
 	const handleNavigate = (screenName: ScreenName) => {
-		navigation.navigate(screenName.name);
+		navigation.navigate(screenName.name, navigation);
 	};
 
 	return (
-		<View style={styles.container}>
+		<SafeAreaView style={styles.container}>
 			<Text style={styles.title}>Bem Vindo!</Text>
 			<TouchableOpacity
 				style={styles.actionButton}
@@ -29,7 +26,7 @@ const HomeScreen = () => {
 			>
 				<Text style={styles.actionButtonText}>Devolução</Text>
 			</TouchableOpacity>
-		</View>
+		</SafeAreaView>
 	);
 };
 

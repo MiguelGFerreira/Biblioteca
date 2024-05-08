@@ -1,25 +1,18 @@
 import React from 'react';
-import {
-	View,
-	Text,
-	StyleSheet,
-} from 'react-native';
-
+import { SafeAreaView, Text, StyleSheet } from 'react-native';
 
 interface BookItemProps {
 	title: string;
 	author: string;
-	isSelected: boolean;
 }
 
-const BookItem: React.FC<BookItemProps> = ({ title, author, isSelected }) => {
-	const bookItemStyle = isSelected ? styles.selectedBookItem : {};
+const BookItem: React.FC<BookItemProps> = ({ title, author }) => {
 
 	return (
-		<View style={bookItemStyle}>
+		<SafeAreaView>
 			<Text style={styles.bookTitle}>{title}</Text>
 			<Text style={styles.bookAuthor}>{author}</Text>
-		</View>
+		</SafeAreaView>
 	);
 };
 
