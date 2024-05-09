@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
-import { SafeAreaView, View, StyleSheet, Text, TextInput, TouchableOpacity } from "react-native";
+import { SafeAreaView, View, StyleSheet, Text, TextInput, TouchableOpacity, Image } from "react-native";
 import { Book } from "../types";
 import { getLivroById } from "../api/livros";
 import { useQuery } from "@tanstack/react-query";
@@ -69,11 +69,11 @@ export default function DetalhesScreen({ route }: { route: any }) {
 	return (
 		<SafeAreaView style={styles.container}>
 			<View style={styles.bookInfoContainer}>
-				{/* <Image
-					source={{ uri: livroQuery.data[0].IMAGEM }}
+				<Image
+					source={{ uri: 'https://th.bing.com/th/id/R.598b0c21ae7577e3911bdeaf215f6a10?rik=mYGFFMxcvtQW6w&riu=http%3a%2f%2fpngimg.com%2fuploads%2fbook%2fbook_PNG2116.png&ehk=t3rvVsFXFNhJQE%2bHTxNEsklPMuqozVePr1XVCsPPJ9w%3d&risl=&pid=ImgRaw&r=0' }}
 					style={styles.bookImage}
 					resizeMode='contain'
-				/> */}
+				/>
 				<Text style={styles.bookTitle}>{livroQuery.data[0].titulo}</Text>
 				<Text style={styles.bookAuthor}>{livroQuery.data[0].autor}</Text>
 				<Text style={styles.bookCategory}>{livroQuery.data[0].categoria}</Text>
@@ -99,55 +99,58 @@ export default function DetalhesScreen({ route }: { route: any }) {
 
 const styles = StyleSheet.create({
 	container: {
-	  flex: 1,
-	  alignItems: 'center',
-	  justifyContent: 'center',
-	  backgroundColor: '#fff',
+		flex: 1,
+		alignItems: 'center',
+		justifyContent: 'center',
+		backgroundColor: '#fff',
 	},
 	bookInfoContainer: {
-	  alignItems: 'center',
+		alignItems: 'center',
 	},
 	bookImage: {
-	  width: 200,
-	  height: 300,
-	  marginBottom: 20,
+		width: 200,
+		height: 300,
+		marginBottom: 20,
 	},
 	bookTitle: {
-	  fontSize: 24,
-	  fontWeight: 'bold',
-	  marginBottom: 10,
+		fontSize: 24,
+		fontWeight: 'bold',
+		marginBottom: 10,
 	},
 	bookAuthor: {
-	  fontSize: 18,
-	  marginBottom: 5,
+		fontSize: 18,
+		marginBottom: 5,
 	},
 	bookCategory: {
-	  fontSize: 16,
-	  marginBottom: 5,
+		fontSize: 16,
+		marginBottom: 5,
 	},
 	bookSubcategory: {
-	  fontSize: 16,
-	  marginBottom: 20,
+		fontSize: 16,
+		marginBottom: 20,
 	},
 	matriculaInput: {
-	  width: '80%',
-	  height: 40,
-	  borderWidth: 1,
-	  borderColor: '#ccc',
-	  borderRadius: 5,
-	  padding: 10,
-	  marginBottom: 20,
+		width: '100%',
+		height: 60,
+		fontSize: 18,
+		borderWidth: 1,
+		borderColor: '#ccc',
+		borderRadius: 5,
+		padding: 10,
+		marginBottom: 20,
 	},
 	borrowButton: {
-	  backgroundColor: '#007bff',
-	  paddingVertical: 10,
-	  paddingHorizontal: 20,
-	  borderRadius: 5,
+		backgroundColor: '#4CAF50',
+		padding: 15,
+		borderRadius: 5,
+		marginBottom: 10,
+		textAlign: "center",
+		alignItems: "center",
+		width: "100%",
 	},
 	borrowButtonText: {
-	  color: '#fff',
-	  fontSize: 18,
-	  fontWeight: 'bold',
+		color: '#fff',
+		fontSize: 18,
+		fontWeight: 'bold',
 	},
-  });
-  
+});
