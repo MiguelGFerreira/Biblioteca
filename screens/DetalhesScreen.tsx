@@ -1,9 +1,10 @@
 import { useNavigation } from "@react-navigation/native";
-import React, { useState } from "react";
-import { SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity } from "react-native";
+import React, { useEffect, useState } from "react";
+import { SafeAreaView, View, StyleSheet, Text, TextInput, TouchableOpacity } from "react-native";
 import { Book } from "../types";
 import { getLivroById } from "../api/livros";
 import { useQuery } from "@tanstack/react-query";
+import Loader from "../components/Loader";
 
 
 export default function DetalhesScreen({ route }: { route: any }) {
@@ -12,18 +13,14 @@ export default function DetalhesScreen({ route }: { route: any }) {
 
 	const [livroSelecionado, setLivroSelecionado] = useState<Book | null>(null);
 	const [matricula, setMatricula] = useState('');
-	const [livro, setLivro] = useState<Book | null>(null);
 
-	const getBookData = async () => {
-		setLivro(await getLivroById(id));
-	}
-	
-	if (livro == null) {
-		getBookData();
-	}
+	const livroQuery = useQuery({
+		queryKey: ['livro', id],
+		queryFn: () => getLivroById(id),
+	})
 
-	console.log(livro?.autor)
-	
+	console.log(livroQuery)
+
 	const handleBookSelection = (book: Book) => {
 		setLivroSelecionado(book);
 	};
@@ -58,71 +55,99 @@ export default function DetalhesScreen({ route }: { route: any }) {
 		//navigation.goBack();
 	};
 
+	if (livroQuery.isLoading) {
+		return <Loader isLoading={true} />
+	}
+	if (livroQuery.isError) {
+		return (
+			<SafeAreaView>
+				<Text>ERRO</Text>
+			</SafeAreaView>
+		)
+	}
+
 	return (
 		<SafeAreaView style={styles.container}>
-			<Text style={styles.label}>Selecionado: {livro?.autor}</Text>
-			<Text style={styles.selectedBookTitle}>{id}</Text>
-
-			<Text style={styles.label}>Matrícula:</Text>
-			<TextInput
-				keyboardType="numeric"
-				maxLength={6}
-				style={styles.input}
-				value={matricula}
-				onChangeText={handleMatriculaChange}
-			/>
-
-			<TouchableOpacity style={styles.borrowButton} onPress={handleBorrowBook}>
-				<Text style={styles.borrowButtonText}>Emprestar Livro</Text>
-			</TouchableOpacity>
+			<View style={styles.bookInfoContainer}>
+				{/* <Image
+					source={{ uri: livroQuery.data[0].IMAGEM }}
+					style={styles.bookImage}
+					resizeMode='contain'
+				/> */}
+				<Text style={styles.bookTitle}>{livroQuery.data[0].titulo}</Text>
+				<Text style={styles.bookAuthor}>{livroQuery.data[0].autor}</Text>
+				<Text style={styles.bookCategory}>{livroQuery.data[0].categoria}</Text>
+				<Text style={styles.bookSubcategory}>{livroQuery.data[0].subcategoria}</Text>
+				<TextInput
+					style={styles.matriculaInput}
+					keyboardType="numeric"
+					maxLength={6}
+					value={matricula}
+					onChangeText={handleMatriculaChange}
+					placeholder="Digite sua matricula"
+				/>
+				<TouchableOpacity
+					style={styles.borrowButton}
+					onPress={handleBorrowBook}
+				>
+					<Text style={styles.borrowButtonText}>Pegar Emprestado</Text>
+				</TouchableOpacity>
+			</View>
 		</SafeAreaView>
 	)
 }
 
 const styles = StyleSheet.create({
 	container: {
-		flex: 1,
-		backgroundColor: '#F4F4F4',
-		padding: 20,
+	  flex: 1,
+	  alignItems: 'center',
+	  justifyContent: 'center',
+	  backgroundColor: '#fff',
 	},
-	title: {
-		fontSize: 32,
-		fontWeight: 'bold',
-		textAlign: 'center',
-		color: '#333',
-		marginBottom: 20,
+	bookInfoContainer: {
+	  alignItems: 'center',
 	},
-	selectedBookContainer: {
-		marginTop: 20,
+	bookImage: {
+	  width: 200,
+	  height: 300,
+	  marginBottom: 20,
 	},
-	selectedBookTitle: {
-		fontSize: 20,
-		color: '#333',
-		marginBottom: 10,
-		fontStyle: 'italic',
+	bookTitle: {
+	  fontSize: 24,
+	  fontWeight: 'bold',
+	  marginBottom: 10,
 	},
-	input: {
-		height: 40,
-		borderColor: '#ddd',
-		borderWidth: 1,
-		marginBottom: 10,
-		padding: 10,
+	bookAuthor: {
+	  fontSize: 18,
+	  marginBottom: 5,
 	},
-	label: {
-		fontSize: 18,
-		color: '#333',
-		marginBottom: 5,
+	bookCategory: {
+	  fontSize: 16,
+	  marginBottom: 5,
+	},
+	bookSubcategory: {
+	  fontSize: 16,
+	  marginBottom: 20,
+	},
+	matriculaInput: {
+	  width: '80%',
+	  height: 40,
+	  borderWidth: 1,
+	  borderColor: '#ccc',
+	  borderRadius: 5,
+	  padding: 10,
+	  marginBottom: 20,
 	},
 	borrowButton: {
-		backgroundColor: '#4CAF50',
-		paddingVertical: 12,
-		paddingHorizontal: 20,
-		borderRadius: 5,
-		alignItems: 'center',
+	  backgroundColor: '#007bff',
+	  paddingVertical: 10,
+	  paddingHorizontal: 20,
+	  borderRadius: 5,
 	},
 	borrowButtonText: {
-		color: '#FFF',
-		fontSize: 16,
-		fontWeight: 'bold',
+	  color: '#fff',
+	  fontSize: 18,
+	  fontWeight: 'bold',
 	},
-});
+  });
+  

@@ -10,6 +10,11 @@ const BookItem: React.FC<BookItemProps> = ({ title, author }) => {
 
 	return (
 		<SafeAreaView>
+			{/* <Image
+					source={{ uri: livroQuery.data[0].IMAGEM }}
+					style={styles.bookImage}
+					resizeMode='contain'
+				/> */}
 			<Text style={styles.bookTitle}>{title}</Text>
 			<Text style={styles.bookAuthor}>{author}</Text>
 		</SafeAreaView>
