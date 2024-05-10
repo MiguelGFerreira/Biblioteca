@@ -1,28 +1,26 @@
 import React from 'react';
-import { SafeAreaView, Text, StyleSheet, Image, Dimensions, Animated } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 
 interface ReservaProps {
 	title: string;
-	matricula: number;
+	matricula: string;
 	dataEmprestimo: string;
 }
 
-const BookItem: React.FC<ReservaProps> = ({ title, matricula, dataEmprestimo }) => {
+const ReservaCard: React.FC<ReservaProps> = ({ title, matricula, dataEmprestimo }) => {
 
 	return (
-		<SafeAreaView style={styles.reservaCard}>
-			<Text style={styles.reservaTitle}>{title}</Text>
-			<Text style={styles.reservaMatricula}>{matricula}</Text>
-			<Text style={styles.reservaMatricula}>{dataEmprestimo}</Text>
-		</SafeAreaView>
+		<View style={styles.container}>
+			<Text style={styles.title}>{title}</Text>
+			<Text style={styles.text}>Matrícula: {matricula}</Text>
+			<Text style={styles.text}>Data do Empréstimo: {dataEmprestimo}</Text>
+		</View>
 	);
 };
 
-const windowWidth = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
-	reservaCard: {
-		width: (windowWidth - 40) / 2,
+	container: {
 		backgroundColor: '#fff',
 		borderRadius: 10,
 		padding: 20,
@@ -36,16 +34,15 @@ const styles = StyleSheet.create({
 		shadowRadius: 3.84,
 		elevation: 5,
 	},
-	reservaTitle: {
+	title: {
 		fontSize: 18,
 		fontWeight: 'bold',
-		color: '#333',
 		marginBottom: 5,
 	},
-	reservaMatricula: {
-		fontSize: 14,
-		color: '#666',
+	text: {
+		fontSize: 16,
+		marginBottom: 5,
 	},
 });
 
-export default BookItem;
+export default ReservaCard;

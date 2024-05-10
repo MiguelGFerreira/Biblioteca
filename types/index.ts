@@ -17,6 +17,6 @@ export interface Reserva {
 	id_reserva: number;
 	id_livro: number;
 	titulo: string;
-	matricula: number;
+	matricula: string;
 	data_emprestimo: string;
 }
