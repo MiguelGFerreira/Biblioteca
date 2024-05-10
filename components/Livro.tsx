@@ -1,5 +1,5 @@
 import React from 'react';
-import { SafeAreaView, Text, StyleSheet, Image, Dimensions, Animated } from 'react-native';
+import { View, Text, StyleSheet, Image, Dimensions } from 'react-native';
 
 interface BookItemProps {
 	title: string;
@@ -10,7 +10,7 @@ interface BookItemProps {
 const BookItem: React.FC<BookItemProps> = ({ title, author, image }) => {
 
 	return (
-		<SafeAreaView style={styles.bookCard}>
+		<View style={styles.bookCard}>
 			<Image
 				source={{ uri: image }}
 				style={styles.bookImage}
@@ -18,7 +18,7 @@ const BookItem: React.FC<BookItemProps> = ({ title, author, image }) => {
 			/>
 			<Text style={styles.bookTitle}>{title}</Text>
 			<Text style={styles.bookAuthor}>{author}</Text>
-		</SafeAreaView>
+		</View>
 	);
 };
 
@@ -27,18 +27,11 @@ const windowWidth = Dimensions.get('window').width;
 const styles = StyleSheet.create({
 	bookCard: {
 		width: (windowWidth - 40) / 2,
-		backgroundColor: '#fff',
+		height: "auto",
 		borderRadius: 10,
 		padding: 20,
 		marginBottom: 20,
-		shadowColor: '#000',
-		shadowOffset: {
-			width: 0,
-			height: 2,
-		},
-		shadowOpacity: 0.25,
-		shadowRadius: 3.84,
-		elevation: 5,
+		
 	},
 	bookImage: {
 		width: '100%',

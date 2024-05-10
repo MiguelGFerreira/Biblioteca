@@ -1,92 +1,65 @@
 import React, { useState } from 'react';
-import Livro from '../components/Livro'; // Assuming Livro is a TypeScript component
-import {
-	View,
-	Text,
-	StyleSheet,
-	FlatList,
-	TextInput,
-	TouchableOpacity,
-} from 'react-native';
+import { SafeAreaView, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
-
-interface Book {
-	id: number;
-	titulo: string;
-	autor: string;
-}
-
-const Livros = [
-	{ id: 1, titulo: 'Livro 1', autor: "Miguel", matricula: "220992" },
-	{ id: 2, titulo: 'Livro 2', autor: "Leonardo", matricula: "220908" },
-	{ id: 3, titulo: 'Livro 3', autor: "Liniker", matricula: "222222" },
-];
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { Reserva } from '../types';
+import { getReservas, patchReserva } from '../api/reservas';
+import ReservaCard from '../components/ReservaCard';
 
 
 export default function DevolucaoScreen() {
-	const [livroSelecionado, setLivroSelecionado] = useState<Book | null>(null);
 	const [matricula, setMatricula] = useState('');
+	const [showBox, setShowBox] = useState(true);
 
 	const navigation = useNavigation();
+	const queryClient = useQueryClient();
 
-	const handleBookSelection = (book: Book) => {
-		setLivroSelecionado(book);
-	};
+	const reservasQuery = useQuery({
+		queryKey: ['reservas'],
+		queryFn: getReservas,
+	});
 
 	const handleMatriculaChange = (text: string) => {
 		setMatricula(text);
 	};
 
-	const handleBorrowBook = () => {
-		if (!matricula) {
-			alert('Insira sua matrícula para continuar.');
-			return;
-		}
+	const handleDevolucao = async (idReserva: number) => {
+		return Alert.alert(
+			"Está certo disso?",
+			"Você quer devolver este livro??",
+			[
+				{
+					text: "Sim",
+					onPress: async () => {
+						await patchReserva(idReserva);
+						queryClient.invalidateQueries({queryKey: ['reservas']})
+						alert("Livro devolvido! \nObrigado!");
+					},
+				},
+				{
+					text: "Não",
+				},
+			]
+		);
+	}
 
-		alert('Livro emprestado com sucesso!');
-		setLivroSelecionado(null);
-		setMatricula('');
-		navigation.goBack();
-	};
-
-	const renderItem = ({ item }: { item: Book }) => (
-		<TouchableOpacity onPress={() => handleBookSelection(item)}>
-			<Livro title={item.titulo} author={item.autor} isSelected={livroSelecionado === item} />
+	const renderItem = ({ item }: { item: Reserva }) => (
+		<TouchableOpacity onPress={() => handleDevolucao(item.id_reserva)}>
+			<ReservaCard title={item.titulo} dataEmprestimo={item.data_emprestimo.substring(0, 10)} matricula={item.matricula} />
 		</TouchableOpacity>
 	);
 
 	return (
-		<View style={styles.container}>
-			<Text style={styles.title}>Biblioteca</Text>
+		<SafeAreaView style={styles.container}>
+			<Text style={styles.title}>Reservas</Text>
 
 			<FlatList
-				data={Livros}
+				data={reservasQuery.data}
 				renderItem={renderItem}
-				keyExtractor={(item) => item.id.toString()}
+				keyExtractor={(item) => item.id_reserva.toString()}
 			/>
 
-			{livroSelecionado && (
-				<View style={styles.selectedBookContainer}>
-					<Text style={styles.label}>Selecionado:</Text>
-					<Text style={styles.selectedBookTitle}>{livroSelecionado.titulo}</Text>
-
-					<Text style={styles.label}>Matrícula:</Text>
-					<TextInput
-						keyboardType="numeric"
-						maxLength={6}
-						style={styles.input}
-						value={matricula}
-						onChangeText={handleMatriculaChange}
-					/>
-
-					<TouchableOpacity style={styles.borrowButton} onPress={handleBorrowBook}>
-						<Text style={styles.borrowButtonText}>Emprestar Livro</Text>
-					</TouchableOpacity>
-				</View>
-			)}
-		</View>
+		</SafeAreaView>
 	);
 }
 

@@ -22,11 +22,37 @@ export const getReservaById = async (id: number) => {
 
 export const postReserva = async (idLivro: number, matricula: string) => {
 	try {
-		axios.post( `${API_URL}/`, {
-			idLivro: idLivro,
-			matricula: matricula
-		}) // continue
+		const response = await axios.post(`${API_URL}/`, {
+			ID_LIVRO: idLivro,
+			MATRICULA: matricula
+		});
+
+		if (response.status !== 200) {
+			console.error(`Erro reservando livro: ${response.data.message}`);
+			return false;
+		}
+
+		return true;
 	} catch (error) {
 		console.error(error);
+		return false;
+	}
+};
+
+
+export const patchReserva = async (idReserva: number) => {
+	try {
+		const response = await axios.patch(`${API_URL}/${idReserva}`, {
+			id: idReserva
+		})
+
+		if (response.status !== 200) {
+			console.error(`Erro devolvendo o livro: ${response.data.message}`);
+			return false;
+		}
+
+		return true;
+	} catch (error) {
+		console.error(error)
 	}
 }

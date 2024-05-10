@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
-import Livro from '../components/Livro'; // Assuming Livro is a TypeScript component
-import { SafeAreaView, Text, StyleSheet, FlatList, TouchableOpacity, TextInput } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import Livro from '../components/Livro';
+import { SafeAreaView, Text, StyleSheet, FlatList, TouchableOpacity, TextInput, View } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { getLivros } from '../api/livros';
 import { Book, ScreenName } from '../types';
-import { StackNavigationProp } from '@react-navigation/stack';
 
 export default function EmprestimoScreen({ navigation }: { navigation: any }) {
 
@@ -28,9 +26,11 @@ export default function EmprestimoScreen({ navigation }: { navigation: any }) {
 	};
 
 	const renderItem = ({ item }: { item: Book }) => (
-		<TouchableOpacity onPress={() => handleNavigate({ name: 'DetalhesScreen' }, item.id)}>
-			<Livro title={item.titulo} author={item.autor} image='https://th.bing.com/th/id/R.598b0c21ae7577e3911bdeaf215f6a10?rik=mYGFFMxcvtQW6w&riu=http%3a%2f%2fpngimg.com%2fuploads%2fbook%2fbook_PNG2116.png&ehk=t3rvVsFXFNhJQE%2bHTxNEsklPMuqozVePr1XVCsPPJ9w%3d&risl=&pid=ImgRaw&r=0' />
-		</TouchableOpacity>
+		<View>
+			<TouchableOpacity onPress={() => handleNavigate({ name: 'DetalhesScreen' }, item.id)}>
+				<Livro title={item.titulo} author={item.autor} image={item.link_capa} />
+			</TouchableOpacity>
+		</View>
 	);
 
 	return (
@@ -82,8 +82,6 @@ const styles = StyleSheet.create({
 	livroContainer: {
 		width: '100%',
 		paddingHorizontal: 10,
-		flexDirection: 'row',
-		flexWrap: 'wrap',
 		justifyContent: 'space-between',
 	},
 });

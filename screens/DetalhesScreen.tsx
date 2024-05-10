@@ -5,6 +5,8 @@ import { Book } from "../types";
 import { getLivroById } from "../api/livros";
 import { useQuery } from "@tanstack/react-query";
 import Loader from "../components/Loader";
+import BookItem from "../components/Livro";
+import { postReserva } from "../api/reservas";
 
 
 export default function DetalhesScreen({ route }: { route: any }) {
@@ -19,40 +21,46 @@ export default function DetalhesScreen({ route }: { route: any }) {
 		queryFn: () => getLivroById(id),
 	})
 
-	console.log(livroQuery)
-
-	const handleBookSelection = (book: Book) => {
-		setLivroSelecionado(book);
-	};
-
 	const handleMatriculaChange = (text: string) => {
 		setMatricula(text);
 	};
 
-	const handleBorrowBook = () => {
+	const addDays = (days: number) => {
+		const result = new Date();
+		result.setDate(result.getDate() + days);
+		return result.toLocaleDateString('pt-BR');
+	}
+
+	const calculaDevolução = (paginas: number) => {
+		if (paginas < 200) {
+			return addDays(10);
+		} else if (paginas < 400) {
+			return addDays(15);
+		} else if (paginas < 500) {
+			return addDays(20);
+		} else if (paginas < 600) {
+			return addDays(25);
+		} else if (paginas < 700) {
+			return addDays(30);
+		} else {
+			return addDays(35);
+		}
+	}
+
+	const handleBorrowBook = async () => {
 		if (!matricula || matricula.length < 6) {
 			alert('Insira sua matrícula para continuar.');
 			return;
 		}
 
-		/*if (paginas < 200) {
-			devolver = 10;
-		} else if (paginas < 400) {
-			devolver = 15;
-		} else if (paginas < 500) {
-			devolver = 20;
-		} else if (paginas < 600) {
-			devolver = 25;
-		} else if (paginas < 700) {
-			devolver = 30;
+		const devolucao = calculaDevolução(livroQuery.data[0].paginas);
+		if (await postReserva(livroQuery.data[0].id, matricula)) {
+			alert(`Livro emprestado com sucesso! \nFavor devolver até o dia ${devolucao}`);
+			setLivroSelecionado(null);
+			setMatricula('');
 		} else {
-			devolver = 35;
-		}*/
-
-		alert('Livro emprestado com sucesso!');
-		setLivroSelecionado(null);
-		setMatricula('');
-		//navigation.goBack();
+			alert("Algo deu errado.")
+		}
 	};
 
 	if (livroQuery.isLoading) {
@@ -70,7 +78,7 @@ export default function DetalhesScreen({ route }: { route: any }) {
 		<SafeAreaView style={styles.container}>
 			<View style={styles.bookInfoContainer}>
 				<Image
-					source={{ uri: 'https://th.bing.com/th/id/R.598b0c21ae7577e3911bdeaf215f6a10?rik=mYGFFMxcvtQW6w&riu=http%3a%2f%2fpngimg.com%2fuploads%2fbook%2fbook_PNG2116.png&ehk=t3rvVsFXFNhJQE%2bHTxNEsklPMuqozVePr1XVCsPPJ9w%3d&risl=&pid=ImgRaw&r=0' }}
+					source={{ uri: livroQuery.data[0].link_capa }}
 					style={styles.bookImage}
 					resizeMode='contain'
 				/>
